@@ -1,0 +1,5 @@
+fastapi[standard]
+yt-dlp
+openai-whisper
+ffmpeg-python
+requests
