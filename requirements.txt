@@ -3,3 +3,5 @@ yt-dlp
 openai-whisper
 ffmpeg-python
 requests
+python-dotenv
+#torch
