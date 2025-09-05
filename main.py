@@ -31,7 +31,11 @@ print(API_KEY, "***")
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    model = whisper.load_model("base")  # Transcribe audio file (mp3, wav, m4a, etc.)
+    result = model.transcribe("xd.mp3", language="es")
+    print("Transcription:")
+    print(result["text"])
+    return {"Hello": result["text"]}
 
 
 @app.post("/summarize")
