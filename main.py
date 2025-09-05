@@ -34,7 +34,7 @@ print(API_KEY, "***")
 def read_root():
     print("Hello World")
     # model = whisper.load_model("base")  # Transcribe audio file (mp3, wav, m4a, etc.)
-    print("Model is on device:", next(model.parameters()).device)
+    # print("Model is on device:", next(model.parameters()).device)
 
     result = model.transcribe("xd.mp3", language="es")
     print("Transcription:")
