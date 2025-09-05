@@ -4,4 +4,4 @@ openai-whisper
 ffmpeg-python
 requests
 python-dotenv
-torch
+torch==2.5.1
