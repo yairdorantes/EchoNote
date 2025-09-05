@@ -7,15 +7,16 @@ import os
 from pydantic import BaseModel
 import requests
 import re
-import torch
+
+# import torch
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
 app = FastAPI()
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Using device: {device}")
+# device = "cuda" if torch.cuda.is_available() else "cpu"
+# print(f"Using device: {device}")
 model = whisper.load_model("base")
 WHATSAPP_URL = os.environ.get("WHATSAPP_URL")
 API_KEY = os.environ.get("API_KEY")
