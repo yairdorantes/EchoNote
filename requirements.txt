@@ -1,7 +1,7 @@
 fastapi[standard]
 yt-dlp
-openai-whisper
+# openai-whisper
 ffmpeg-python
 requests
 python-dotenv
-torch==2.5.1
+# torch==2.5.1
