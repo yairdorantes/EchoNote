@@ -7,13 +7,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 
-COPY . .
+COPY packages ./packages
 
-RUN pip install --no-index --find-links=./packages openai-whisper torch 
+RUN pip install --no-index --find-links=./packages openai-whisper torch==2.5.1
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-
+COPY . .
 
 CMD ["fastapi", "run", "main.py", "--port", "8000", "--host", "0.0.0.0"]
 
