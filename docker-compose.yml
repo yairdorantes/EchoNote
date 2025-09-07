@@ -14,3 +14,5 @@ services:
     volumes:
       - .:/app
     runtime: nvidia
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

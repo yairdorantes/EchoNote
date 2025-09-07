@@ -18,7 +18,7 @@ app = FastAPI()
 # device = "cuda" if torch.cuda.is_available() else "cpu"
 # print(f"Using device: {device}")
 model = whisper.load_model("base")
-WHATSAPP_URL = os.environ.get("WHATSAPP_URL")
+SERVER_URL = "http://http://host.docker.internal"
 API_KEY = os.environ.get("API_KEY")
 MODEL_URL = os.environ.get("MODEL_URL")
 
@@ -102,7 +102,7 @@ def summarize_video(transcription: str):
             {
                 "parts": [
                     {
-                        "text": f"Resume este video con base a esta transcripcion: {transcription}"
+                        "text": f"Usando únicamente la transcripción que te proporciono, genera un resumen del video en un máximo de 6 párrafos. Cada párrafo debe cubrir un tema o idea principal diferente. El resumen debe ser claro, conciso y fácil de leer, manteniendo la esencia del contenido original. Evita información irrelevante y no agregues detalles que no estén en la transcripción: {transcription}"
                     }
                 ]
             }
@@ -120,7 +120,7 @@ def summarize_video(transcription: str):
 
 def send_whatsapp_message(message: str):
     try:
-        url = WHATSAPP_URL
+        url = f"{SERVER_URL}:3000/whatsapp"
         params = {
             "destiny": "7291434687",
             "msg": message,
