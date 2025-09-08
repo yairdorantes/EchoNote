@@ -103,12 +103,11 @@ def summarize_video(transcription: str):
                 "parts": [
                     {
                         "text": f"""Usando únicamente la transcripción que te proporciono, genera un resumen **muy conciso** del video.  
-                        - El resumen debe tener **de 1 a 5 párrafos como máximo**.  
-                        - Cada párrafo debe cubrir **una idea principal diferente**.  
-                        - Mantén el texto **claro, fácil de leer y directo**, sin detalles innecesarios.  
-                        - Conserva la esencia y lo más importante del contenido original.  
-                        - No agregues información que no esté en la transcripción.  
-
+                        - Extensión máxima: 120 palabras.  
+                        - Divide el resumen en hasta 5 párrafos cortos.  
+                        - Cada párrafo debe expresar **una idea principal diferente** en una o dos frases.  
+                        - No repitas ideas, no des ejemplos, no agregues información extra.  
+                        - Mantén el texto **claro, directo y fácil de leer**.  
                         Transcripción: {transcription}"""
                     }
                 ]
