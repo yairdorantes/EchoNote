@@ -20,7 +20,7 @@ load_dotenv()
 app = FastAPI()
 # device = "cuda" if torch.cuda.is_available() else "cpu"
 # print(f"Using device: {device}")
-model = whisper.load_model("base")
+model = whisper.load_model("small")
 SERVER_URL = "http://host.docker.internal"
 API_KEY = os.environ.get("API_KEY")
 MODEL_URL = os.environ.get("MODEL_URL")
