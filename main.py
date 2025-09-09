@@ -1,7 +1,10 @@
+import shutil
+import subprocess
+import tempfile
 import whisper
 import yt_dlp
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 import glob
 import os
 from pydantic import BaseModel
@@ -24,7 +27,8 @@ MODEL_URL = os.environ.get("MODEL_URL")
 
 
 class TranscriptionRequest(BaseModel):
-    yt_url: str
+    yt_url: str | None = None
+    lang: str = "es"
 
 
 print(API_KEY, "***")
@@ -32,7 +36,6 @@ print(API_KEY, "***")
 
 @app.get("/")
 def read_root():
-
     return {"Hello": "World"}
 
 
@@ -48,19 +51,19 @@ def summarize(req: TranscriptionRequest):
 
         transcription = model.transcribe(
             mp3_files[0],
-            language="es",
+            language=req.lang,
         )["text"]
 
-        resume_by_gemini = summarize_video(transcription)["candidates"][0]["content"][
-            "parts"
-        ][0]["text"]
+        resume_by_gemini = summarize_video(transcription, req.lang)["candidates"][0][
+            "content"
+        ]["parts"][0]["text"]
 
         for mp3_file in glob.glob("*.mp3"):
             os.remove(mp3_file)
 
         # send summarize via whatsapp
         text = format_direct_text(resume_by_gemini)
-        send_whatsapp_message(text)
+        # send_whatsapp_message(text)
 
         return {"summary": text}
     except Exception as e:
@@ -68,6 +71,37 @@ def summarize(req: TranscriptionRequest):
         return {"error": "Failed to download audio"}
 
     # Prepare JSON payload for the API
+
+
+@app.post("/summarize_video_file")
+async def summarize_video_file(file: UploadFile = File(...)):
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        # Save uploaded video
+        video_path = os.path.join(tmp_dir, file.filename)
+        with open(video_path, "wb") as buffer:
+            buffer.write(await file.read())
+
+        # Convert to audio
+        audio_path = os.path.join(tmp_dir, "audio.mp3")
+        subprocess.run(
+            ["ffmpeg", "-i", video_path, "-vn", "-acodec", "libmp3lame", audio_path],
+            check=True,
+        )
+
+        # Ensure audio file exists
+        if not os.path.exists(audio_path):
+            return {"error": "No audio file found"}
+
+        # Transcribe
+        transcription = model.transcribe(audio_path, language="es")["text"]
+
+        # Return transcription
+        return {"transcription": transcription}
+
+    finally:
+        # Cleanup temp directory
+        shutil.rmtree(tmp_dir)
 
 
 @app.get("/items/{item_id}")
@@ -95,20 +129,32 @@ def get_audio_info(url: str):
 # Transcribe audio file (mp3, wav, m4a, etc.)
 
 
-def summarize_video(transcription: str):
+def summarize_video(transcription: str, lang: str = "es"):
+    prompts = {
+        "es": f"""Usando únicamente la transcripción que te proporciono, genera un resumen **muy conciso** del video.  
+            - Extensión máxima: 150 palabras.  
+            - Divide el resumen en párrafos cortos.  
+            - Cada párrafo debe expresar **una idea principal diferente** en una o dos frases.  
+            - No repitas ideas, no des ejemplos, no agregues información extra.  
+            - Mantén el texto **claro, directo y fácil de leer**.  
+            Transcripción: {transcription}""",
+        "en": f"""
+            Using only the transcription I provide, generate a **very concise** summary of the video.  
+            - Maximum length: 150 words.  
+            - Divide the summary into short paragraphs.  
+            - Each paragraph must express **a different main idea** in one or two sentences.  
+            - Do not repeat ideas, do not give examples, do not add extra information.  
+            - Keep the text **clear, direct, and easy to read**.  
+            Transcription: {transcription}
+            """,
+    }
     # Prepare JSON payload for the API
     payload = {
         "contents": [
             {
                 "parts": [
                     {
-                        "text": f"""Usando únicamente la transcripción que te proporciono, genera un resumen **muy conciso** del video.  
-                        - Extensión máxima: 150 palabras.  
-                        - Divide el resumen en párrafos cortos.  
-                        - Cada párrafo debe expresar **una idea principal diferente** en una o dos frases.  
-                        - No repitas ideas, no des ejemplos, no agregues información extra.  
-                        - Mantén el texto **claro, directo y fácil de leer**.  
-                        Transcripción: {transcription}"""
+                        "text": prompts.get(lang, prompts["es"]),
                     }
                 ]
             }
