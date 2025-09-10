@@ -132,7 +132,7 @@ def get_audio_info(url: str):
 def summarize_video(transcription: str, lang: str = "es"):
     prompts = {
         "es": f"""Usando únicamente la transcripción que te proporciono, genera un resumen **muy conciso** del video.  
-            - Extensión máxima: 150 palabras.  
+            - Extensión máxima: 180 palabras.  
             - Divide el resumen en párrafos cortos.  
             - Cada párrafo debe expresar **una idea principal diferente** en una o dos frases.  
             - No repitas ideas, no des ejemplos, no agregues información extra.  
@@ -140,7 +140,7 @@ def summarize_video(transcription: str, lang: str = "es"):
             Transcripción: {transcription}""",
         "en": f"""
             Using only the transcription I provide, generate a **very concise** summary of the video.  
-            - Maximum length: 150 words.  
+            - Maximum length: 180 words.  
             - Divide the summary into short paragraphs.  
             - Each paragraph must express **a different main idea** in one or two sentences.  
             - Do not repeat ideas, do not give examples, do not add extra information.  
