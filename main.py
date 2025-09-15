@@ -1,6 +1,7 @@
 import shutil
 import subprocess
 import tempfile
+import traceback
 import whisper
 import yt_dlp
 from typing import Union
@@ -68,6 +69,9 @@ def summarize(req: TranscriptionRequest):
         return {"summary": text}
     except Exception as e:
         print(f"Error downloading audio: {e}")
+        print("Type:", type(e))
+        print("Args:", e.args)
+        traceback.print_exc()
         return {"error": "Failed to download audio"}
 
     # Prepare JSON payload for the API
