@@ -4,7 +4,7 @@ services:
     container_name: echonote_app
     restart: unless-stopped
     ports:
-      - "8001:8000"
+      - "8002:8000"
     environment:
       - API_KEY=${API_KEY}
       - WHATSAPP_URL=${WHATSAPP_URL}
@@ -13,6 +13,12 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     volumes:
       - .:/app
-    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     extra_hosts:
       - "host.docker.internal:host-gateway"
