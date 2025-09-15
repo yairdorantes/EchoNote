@@ -1,5 +1,5 @@
 fastapi[standard]
-yt-dlp
+yt-dlp==2025.8.27
 # openai-whisper
 ffmpeg-python
 requests
