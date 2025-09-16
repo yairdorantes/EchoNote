@@ -5,7 +5,9 @@ services:
     restart: unless-stopped
     ports:
       - "8002:8000"
-    network_mode: "host"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     environment:
       - API_KEY=${API_KEY}
       - WHATSAPP_URL=${WHATSAPP_URL}
