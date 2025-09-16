@@ -1,7 +1,7 @@
 fastapi[standard]
 yt-dlp==2025.8.27
 # openai-whisper
-ffmpeg-python
-requests
+ffmpeg-python==0.2.0
+requests==2.32.5
 python-dotenv
 # torch==2.5.1
