@@ -32,9 +32,6 @@ class TranscriptionRequest(BaseModel):
     lang: str = "es"
 
 
-print(API_KEY, "***")
-
-
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -43,7 +40,7 @@ def read_root():
 @app.post("/summarize")
 def summarize(req: TranscriptionRequest):
     try:
-        get_audio_info(req.yt_url.strip())
+        yt_data = get_audio_info(req.yt_url.strip())
         print(req.yt_url)
         mp3_files = glob.glob("*.mp3")
 
@@ -66,7 +63,11 @@ def summarize(req: TranscriptionRequest):
         text = format_direct_text(resume_by_gemini)
         # send_whatsapp_message(text)
 
-        return {"summary": text}
+        return {
+            "summary": text,
+            "title": yt_data["title"],
+            "thumbnail": yt_data["thumbnail_url"],
+        }
     except Exception as e:
         print(f"Error downloading audio: {e}")
         print("Type:", type(e))
@@ -114,7 +115,6 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 
 def get_audio_info(url: str):
-    # extract audio in mp3 from a youtube video url
     ydl_opts = {
         "format": "bestaudio/best",
         "postprocessors": [
@@ -127,7 +127,19 @@ def get_audio_info(url: str):
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        # extract info but don't download yet
+        info = ydl.extract_info(url, download=False)
+
+        title = info.get("title")
+        thumbnail_url = info.get("thumbnail")
+
+        # actually download the audio
         ydl.download([url])
+
+    return {
+        "title": title,
+        "thumbnail_url": thumbnail_url,
+    }
 
 
 # Transcribe audio file (mp3, wav, m4a, etc.)

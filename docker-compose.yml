@@ -5,17 +5,12 @@ services:
     restart: unless-stopped
     ports:
       - "8002:8000"
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
     environment:
       - API_KEY=${API_KEY}
       - WHATSAPP_URL=${WHATSAPP_URL}
       - MODEL_URL=${MODEL_URL}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-    volumes:
-      - .:/app
     deploy:
       resources:
         reservations:
